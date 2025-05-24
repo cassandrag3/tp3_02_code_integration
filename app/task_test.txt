@@ -1,0 +1,11 @@
+  task_test.c (task_test.h) 
+   Non-Blocking & Update By Time Code -> Test Code Integration
+  
+...
+En task_test_attribute.h se define el tipo de dato task_test_dta_t, que es una estructura que contiene un solo campo: tick, una variable de tipo uint32_t que actúa como un temporizador o contador de espera para la tarea.
+
+En task_test.c, se declara una instancia global de esta estructura, llamada task_test_dta, la cual se inicializa con un valor mínimo (DEL_TEST_XX_MIN). También se definen dos variables globales adicionales: g_task_test_cnt, que lleva la cuenta de cuántas veces se ejecutó la tarea, y g_task_test_tick_cnt, un contador de ticks del sistema, declarado como volatile para permitir su uso dentro de interrupciones.
+
+Entre las constantes definidas se encuentran valores iniciales y límites para los contadores (G_TASK_TEST_CNT_INIT, G_TASK_TEST_TICK_CNT_INI) y para los retardos (DEL_TEST_XX_MIN, DEL_TEST_XX_MED, DEL_TEST_XX_MAX), los cuales se utilizan como tiempos de espera dentro del flujo de la tarea.
+
+Las funciones principales que implementa este módulo son task_test_init y task_test_update. La primera se encarga de inicializar la tarea: imprime mensajes por consola mediante un logger, reinicia los contadores, inicializa el display LCD en modo GPIO de 4 bits y muestra los mensajes "TdSE Bienvenidos" y "Test Nro:" en la pantalla. Por su parte, la función task_test_update se ejecuta periódicamente siempre que haya un tick pendiente. Dentro de ella se protege el acceso a variables compartidas usando instrucciones en ensamblador para deshabilitar y habilitar interrupciones (CPSID i / CPSIE i). La función decrementa el valor de tick, y cuando llega a cero, lo reinicia al máximo (DEL_TEST_XX_MAX) y muestra en el display la cantidad de miles de ejecuciones que ha tenido la tarea (g_task_test_cnt / 1000), utilizando funciones auxiliares de escritura sobre el display.

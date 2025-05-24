@@ -1,0 +1,23 @@
+  app.c (app.h)
+   Endless loops, which execute tasks with fixed computing time. This 
+   sequential execution is only deviated from when an interrupt event occurs.
+
+...
+Tipos de datos definidos:
+
+task_cfg_t estructura con:
+task_init: puntero a función de inicialización de una tarea (void (*)(void *)).
+task_update: puntero a función de actualización de una tarea (void (*)(void *)).
+parameters: puntero a los parámetros de la tarea.
+
+task_dta_t estructura con:
+WCET: tiempo de ejecución en el peor caso (en microsegundos).
+
+task_cfg_list[]: array constante de estructuras task_cfg_t. Contiene las tareas disponibles, en este caso:
+task_dta_list[]: array de estructuras task_dta_t. Almacena el WCET de cada tarea.
+
+Funciones:
+void app_init(void) : Inicializa la aplicación. Imprime mensajes por logger, resetea contadores, inicializa tareas, y habilita el contador de ciclos.
+void app_update(void) :Actualiza el sistema si hay un tick pendiente. Ejecuta cada tarea, mide su tiempo de ejecución y actualiza WCET y el tiempo total.
+void HAL_SYSTICK_Callback(void) :Callback del sistema de ticks. Incrementa g_app_tick_cnt y g_task_test_tick_cnt.
+
